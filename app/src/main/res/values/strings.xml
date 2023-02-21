@@ -2,4 +2,8 @@
     <string name="app_name">Prueba de Ingreso</string>
 
     <string name="search_name">Buscar Usuario</string>
+    <string name="username">Username</string>
+    <string name="user_phone">Phone</string>
+    <string name="user_email">Email</string>
+    <string name="button_text">Ver publicaciones</string>
 </resources>

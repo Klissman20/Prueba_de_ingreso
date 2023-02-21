@@ -4,31 +4,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/lightgray"
     tools:context=".MainActivity">
 
     <Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@color/teal_700"
+        android:background="@color/colorPrimary"
         android:title="@string/app_name"
-        android:titleTextColor="@color/white"/>
+        android:titleTextColor="@color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/viewPager"/>
 
-    <SearchView
-        android:id="@+id/searchView"
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewPager"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:iconifiedByDefault="false"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        android:layout_height="wrap_content"
+        app:layout_constrainedHeight="true"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
-        android:gravity="center_horizontal"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
-        android:queryHint="@string/search_name"
-        android:maxWidth="500dp"
-        />
+        app:layout_constraintVertical_bias="1"/>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
