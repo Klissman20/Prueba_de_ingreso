@@ -6,4 +6,12 @@
     <string name="user_phone">Phone</string>
     <string name="user_email">Email</string>
     <string name="button_text">Ver publicaciones</string>
+
+    <string name="DetalledeUsuario">Detalles de Usuario</string>
+    <string name="nombreLocal">Nombre</string>
+    <string name="descripcion">Descripción</string>
+    <string name="pub">Publicaciones</string>
+
+
+
 </resources>

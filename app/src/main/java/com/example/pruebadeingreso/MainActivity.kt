@@ -5,14 +5,17 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.example.pruebadeingreso.adapter.PageAdapter
+import com.example.pruebadeingreso.databinding.ActivityMainBinding
 import com.example.pruebadeingreso.fragment.RecyclerFragment
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityMainBinding
     private var viewPager: ViewPager? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         viewPager = findViewById(R.id.viewPager)
 

@@ -5,12 +5,11 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pruebadeingreso.R
-import com.example.pruebadeingreso.UserDetail
+import com.example.pruebadeingreso.UserDetailActivity
+import com.example.pruebadeingreso.databinding.UserItemBinding
 import com.example.pruebadeingreso.model.User
 
 open class UserAdapter(private val mUsers: ArrayList<User>) : RecyclerView.Adapter<UserAdapter.ViewHolder>() {
@@ -32,24 +31,19 @@ open class UserAdapter(private val mUsers: ArrayList<User>) : RecyclerView.Adapt
     // Provide a direct reference to each of the views within a data item
     // Used to cache the views within the item layout for fast access
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        // Your holder should contain and initialize a member variable
-        // for any view that will be set as you render a row
-        var name_tv = itemView.findViewById<TextView>(R.id.user_name)
-        var phone_tv = itemView.findViewById<TextView>(R.id.user_phone)
-        var email_tv = itemView.findViewById<TextView>(R.id.user_email)
-        var pub_btn = itemView.findViewById<Button>(R.id.pub_btn)
-
+        val binding = UserItemBinding.bind(itemView)
         fun bind(){
             val user: User = mUsers[adapterPosition]
-            name_tv.text = user.name
-            phone_tv.text = user.phone
-            email_tv.text = user.email
-            pub_btn.setOnClickListener{
+            binding.userName.text = user.name
+            binding.userPhone.text = user.phone
+            binding.userEmail.text = user.email
+            binding.pubBtn.setOnClickListener{
                 try {
-                    val i = Intent(itemView.context, UserDetail::class.java).apply {
-                        putExtra("name", user.getName())
-                        putExtra("phone", user.getPhone())
-                        putExtra("email", user.getEmail())
+                    val i = Intent(itemView.context, UserDetailActivity::class.java).apply {
+                        putExtra("id", user.id)
+                        putExtra("name", user.name)
+                        putExtra("phone", user.phone)
+                        putExtra("email", user.email)
                     }
                     itemView.context.startActivity(i)
                 }catch (e: ActivityNotFoundException){
