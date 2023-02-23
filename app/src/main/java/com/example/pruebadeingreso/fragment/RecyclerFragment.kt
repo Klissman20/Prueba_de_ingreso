@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -30,6 +31,7 @@ class RecyclerFragment(): Fragment(), UserAdapter.OnItemClickListener {
     private var mUsersRecycler: RecyclerView? = null
     private var mSearchView: androidx.appcompat.widget.SearchView? = null
     private var mAdapter: UserAdapter? = null
+    private var mEmptyText: TextView? = null
     private lateinit var db: UserDao
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -37,6 +39,8 @@ class RecyclerFragment(): Fragment(), UserAdapter.OnItemClickListener {
 
         mUsersRecycler = binding.recyclerViewFragment
         mSearchView = binding.searchView
+        mEmptyText = binding.tvEmpty
+        mEmptyText!!.visibility = View.INVISIBLE
         mSearchView!!.isActivated = false
         mSearchView!!.isEnabled = false
 
@@ -113,10 +117,16 @@ class RecyclerFragment(): Fragment(), UserAdapter.OnItemClickListener {
                     users.clear()
                     users.addAll(db.findByName(search(newText)))
                     if (users.isEmpty()) {
-                        //Toast.makeText(context, "esta vacio", Toast.LENGTH_LONG).show()
+                        mEmptyText!!.visibility = View.VISIBLE
+                        mUsersRecycler!!.visibility = View.INVISIBLE
+                    }else{
+                        mEmptyText!!.visibility = View.INVISIBLE
+                        mUsersRecycler!!.visibility = View.VISIBLE
                     }
                     mAdapter!!.notifyDataSetChanged()
                 } else {
+                    mEmptyText!!.visibility = View.INVISIBLE
+                    mUsersRecycler!!.visibility = View.VISIBLE
                     users.clear()
                     users.addAll(db.getAll())
                     mAdapter!!.notifyDataSetChanged()
@@ -127,8 +137,17 @@ class RecyclerFragment(): Fragment(), UserAdapter.OnItemClickListener {
                 if (query != "") {
                     users.clear()
                     users.addAll(db.findByName(search(query)))
+                    if (users.isEmpty()) {
+                        mEmptyText!!.visibility = View.VISIBLE
+                        mUsersRecycler!!.visibility = View.INVISIBLE
+                    }else{
+                        mEmptyText!!.visibility = View.INVISIBLE
+                        mUsersRecycler!!.visibility = View.VISIBLE
+                    }
                     mAdapter!!.notifyDataSetChanged()
                 } else {
+                    mEmptyText!!.visibility = View.INVISIBLE
+                    mUsersRecycler!!.visibility = View.VISIBLE
                     users.clear()
                     users.addAll(db.getAll())
                     mAdapter!!.notifyDataSetChanged()
