@@ -1,11 +1,24 @@
 package com.example.pruebadeingreso.model
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
+import android.content.Context
+import androidx.room.*
 
-@Database(version = 1, entities = [User::class])
+@Database(version = 1, entities = [User::class], exportSchema = false)
 abstract class UserDatabase : RoomDatabase() {
-    // SongDao is a class annotated with @Dao.
-    abstract fun getUserDao()
+    abstract fun getUserDao(): UserDao
 
+    companion object {
+        private var INSTANCE: UserDatabase? = null
+
+        fun getInstance(context: Context): UserDatabase? {
+            if (INSTANCE == null) {
+                synchronized(UserDatabase::class) {
+                    INSTANCE = Room.databaseBuilder(context.applicationContext,
+                        UserDatabase::class.java, "user_db").allowMainThreadQueries()
+                        .build()
+                }
+            }
+            return INSTANCE
+        }
+    }
 }

@@ -1,16 +1,19 @@
 package com.example.pruebadeingreso.fragment
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.pruebadeingreso.UserDetailActivity
 import com.example.pruebadeingreso.adapter.UserAdapter
-import com.example.pruebadeingreso.databinding.RecyclerFragmentBinding
+import com.example.pruebadeingreso.databinding.FragmentRecyclerBinding
 import com.example.pruebadeingreso.model.User
+import com.example.pruebadeingreso.model.UserDao
+import com.example.pruebadeingreso.model.UserDatabase
 import com.example.pruebadeingreso.service.APIService
 import kotlinx.coroutines.*
 import retrofit2.Retrofit
@@ -18,67 +21,82 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.*
 import kotlin.collections.ArrayList
 
+class RecyclerFragment(): Fragment(), UserAdapter.OnItemClickListener {
 
-class RecyclerFragment(): Fragment(), View.OnClickListener {
-
-    private var _binding:RecyclerFragmentBinding? = null
+    private var _binding:FragmentRecyclerBinding? = null
     private val binding get() = _binding!!
 
     lateinit var users: ArrayList<User>
     private var mUsersRecycler: RecyclerView? = null
     private var mSearchView: androidx.appcompat.widget.SearchView? = null
-    private var mSearchTerm: String? = null
     private var mAdapter: UserAdapter? = null
+    private lateinit var db: UserDao
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        _binding = RecyclerFragmentBinding.inflate(inflater, container, false)
+        _binding = FragmentRecyclerBinding.inflate(inflater, container, false)
 
         mUsersRecycler = binding.recyclerViewFragment
         mSearchView = binding.searchView
         mSearchView!!.isActivated = false
+        mSearchView!!.isEnabled = false
+
+        db = context?.let { UserDatabase.getInstance(it)?.getUserDao()}!!
 
         getUsers()
-
+        filter()
         return binding.root
     }
 
-    private fun getUsers(){
-
-        CoroutineScope(Dispatchers.IO).launch {
-            val call = getRetrofit().create(APIService::class.java).getUserInformation("/users")
-            val data = call.body()
-            activity?.runOnUiThread {
-                while (!call.isSuccessful) {
-                    binding.progressBar.visibility = View.VISIBLE
-                    mUsersRecycler!!.visibility = View.INVISIBLE
-                }
-
-                val mUsers = mutableListOf<User>()
-                if (data != null) {
-                    for (user in data){
-                        mUsers.add(user)
-                    }
-                }
-                users = arrayListOf()
-                users.addAll(mUsers)
-                binding.progressBar.visibility = View.INVISIBLE
-                mUsersRecycler!!.visibility = View.VISIBLE
-
-                initRecyclerView()
-
-            }
-            //mAdapter!!.notifyDataSetChanged()
-            /*if(call.isSuccessful){
-                binding.progressBar.visibility = View.INVISIBLE
-                mUsersRecycler!!.visibility = View.VISIBLE
-            }else{
-                binding.progressBar.visibility = View.VISIBLE
-                mUsersRecycler!!.visibility = View.INVISIBLE
-            }*/
-        }
+    override fun onResume() {
+        super.onResume()
+        filter()
     }
 
-    override fun onClick(p0: View?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        filter()
+    }
+
+    private fun getUsers(){
+        if(db.getAll().isEmpty()) {
+            CoroutineScope(Dispatchers.IO).launch {
+                val call = getRetrofit().create(APIService::class.java).getUserInformation("/users")
+                val data = call.body()
+                activity?.runOnUiThread {
+                    while (!call.isSuccessful) {
+                        binding.progressBar.visibility = View.VISIBLE
+                        mUsersRecycler!!.visibility = View.INVISIBLE
+                        mSearchView?.visibility = View.INVISIBLE
+                    }
+
+                    val mUsers = mutableListOf<User>()
+                    if (data != null) {
+                        for (user in data) {
+                            mUsers.add(user)
+                        }
+                    }
+                    users = arrayListOf()
+                    users.addAll(mUsers)
+
+                    binding.progressBar.visibility = View.INVISIBLE
+                    mUsersRecycler!!.visibility = View.VISIBLE
+                    mSearchView?.visibility = View.VISIBLE
+
+                    initRecyclerView()
+                }
+                withContext(Dispatchers.IO) {
+                    for (user in users) {
+                        db.insertAll(user)
+                    }
+                }
+            }
+
+        }else{
+            users = arrayListOf()
+            users.addAll(db.getAll())
+            binding.progressBar.visibility = View.INVISIBLE
+            initRecyclerView()
+        }
     }
 
     private fun getRetrofit(): Retrofit {
@@ -91,24 +109,29 @@ class RecyclerFragment(): Fragment(), View.OnClickListener {
     private fun filter(){
         mSearchView!!.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextChange(newText: String): Boolean {
-                mSearchTerm = newText
-                if (mSearchTerm != "") {
-                    search(mSearchTerm)
+                if (newText != "") {
                     users.clear()
+                    users.addAll(db.findByName(search(newText)))
+                    if (users.isEmpty()) {
+                        //Toast.makeText(context, "esta vacio", Toast.LENGTH_LONG).show()
+                    }
                     mAdapter!!.notifyDataSetChanged()
-                }else{
-                    //traer a todos
+                } else {
+                    users.clear()
+                    users.addAll(db.getAll())
                     mAdapter!!.notifyDataSetChanged()
                 }
                 return false
             }
             override fun onQueryTextSubmit(query: String): Boolean {
-                mSearchTerm = query
-                if (mSearchTerm != "") {
-                    search(mSearchTerm)
-
-                }else{
-                    //traer a todos
+                if (query != "") {
+                    users.clear()
+                    users.addAll(db.findByName(search(query)))
+                    mAdapter!!.notifyDataSetChanged()
+                } else {
+                    users.clear()
+                    users.addAll(db.getAll())
+                    mAdapter!!.notifyDataSetChanged()
                 }
                 return false
             }
@@ -116,29 +139,31 @@ class RecyclerFragment(): Fragment(), View.OnClickListener {
     }
 
     private fun search(search: String?): String{
-        var query : String
+        val query : String
         if (search!!.length > 1) {
             val text0 = search.substring(0, 1).uppercase(Locale.ROOT)
             val text1 = search.substring(1).lowercase(Locale.ROOT)
-            query = text0 + text1
+            query = "$text0$text1%"
         }else {
             val text0 = search.substring(0, 1).uppercase(Locale.ROOT)
-            query = text0
+            query = "$text0%"
         }
         return query
     }
 
     private fun initRecyclerView() {
-        if (mSearchView == null) {
-            Log.w("MAIN", "No query, not initializing RecyclerView")
-        }
-
-        mAdapter = UserAdapter(users)
+        mAdapter = UserAdapter(users, this)
         mUsersRecycler!!.layoutManager = LinearLayoutManager(activity)   //Vista en forma de grilla
         mUsersRecycler!!.adapter = mAdapter
-
     }
-    companion object {
-        fun newInstance() = RecyclerFragment()
+
+    override fun onItemClick(user: User) {
+        val intent = Intent(activity, UserDetailActivity::class.java).apply {
+            putExtra("userId", user.id)
+            putExtra("userName", user.name)
+            putExtra("userPhone", user.phone)
+            putExtra("userEmail",user.email)
+        }
+        startActivity(intent)
     }
 }

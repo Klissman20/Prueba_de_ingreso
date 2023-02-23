@@ -11,7 +11,8 @@
     <string name="nombreLocal">Nombre</string>
     <string name="descripcion">Descripción</string>
     <string name="pub">Publicaciones</string>
-
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="ver">VER PUBLICACIONES</string>
 
 
 </resources>

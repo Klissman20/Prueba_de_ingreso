@@ -1,12 +1,18 @@
 package com.example.pruebadeingreso
 
-import androidx.appcompat.app.AppCompatActivity
+import android.app.AlertDialog
+import android.content.Context
+import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.provider.Settings
+import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.ViewPager
 import com.example.pruebadeingreso.adapter.PageAdapter
 import com.example.pruebadeingreso.databinding.ActivityMainBinding
-import com.example.pruebadeingreso.fragment.RecyclerFragment
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,17 +25,56 @@ class MainActivity : AppCompatActivity() {
 
         viewPager = findViewById(R.id.viewPager)
 
-        setupViewPager()
+        checkInternet()
+
     }
 
-    private fun addFragment(): ArrayList<Fragment> {
-        return arrayListOf(
-            RecyclerFragment.newInstance()
-        )
+    override fun onResume() {
+        super.onResume()
+        checkInternet()
+    }
+
+    private fun checkInternet(){
+        if (isOnline(this)){
+            setupViewPager()
+        }else{
+            val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+            builder.setMessage("Connect to Internet to Continue")
+                .setCancelable(false)
+                .setPositiveButton("Connect") { dialog, id -> startActivity(Intent(Settings.ACTION_WIFI_SETTINGS)) }
+                .setNegativeButton("Quit") { dialog, id -> finish() }
+            val alert: AlertDialog = builder.create()
+            alert.show()
+        }
     }
 
     private fun setupViewPager(){
-        viewPager!!.adapter = PageAdapter(supportFragmentManager, addFragment())
+        val adapter = PageAdapter(supportFragmentManager)
+        viewPager!!.adapter = adapter
+
+        viewPager!!.offscreenPageLimit = 2
+    }
+
+    private fun isOnline(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (connectivityManager != null) {
+            val capabilities =
+                connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+            if (capabilities != null) {
+                if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_CELLULAR")
+                    return true
+                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_WIFI")
+                    return true
+                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_ETHERNET")
+                    return true
+                }
+            }
+        }
+        return false
     }
 
 }

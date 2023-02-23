@@ -1,19 +1,25 @@
 package com.example.pruebadeingreso.adapter
 
-import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pruebadeingreso.R
 import com.example.pruebadeingreso.UserDetailActivity
 import com.example.pruebadeingreso.databinding.UserItemBinding
 import com.example.pruebadeingreso.model.User
 
-open class UserAdapter(private val mUsers: ArrayList<User>) : RecyclerView.Adapter<UserAdapter.ViewHolder>() {
+open class UserAdapter(
+    private val mUsers: ArrayList<User>,
+    listener: OnItemClickListener
+) : RecyclerView.Adapter<UserAdapter.ViewHolder>() {
 
+    private var mListener: OnItemClickListener? = null
+
+    init{
+        this.mListener = listener
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -28,39 +34,27 @@ open class UserAdapter(private val mUsers: ArrayList<User>) : RecyclerView.Adapt
         holder.bind()
     }
 
-    // Provide a direct reference to each of the views within a data item
-    // Used to cache the views within the item layout for fast access
+    interface OnItemClickListener {fun onItemClick(user: User)}
+
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val binding = UserItemBinding.bind(itemView)
+        private val binding = UserItemBinding.bind(itemView)
         fun bind(){
             val user: User = mUsers[adapterPosition]
             binding.userName.text = user.name
             binding.userPhone.text = user.phone
             binding.userEmail.text = user.email
             binding.pubBtn.setOnClickListener{
-                try {
-                    val i = Intent(itemView.context, UserDetailActivity::class.java).apply {
-                        putExtra("id", user.id)
-                        putExtra("name", user.name)
-                        putExtra("phone", user.phone)
-                        putExtra("email", user.email)
-                    }
-                    itemView.context.startActivity(i)
-                }catch (e: ActivityNotFoundException){
-                    showAlert("Algo salió mal")
+                val intent = Intent(itemView.context, UserDetailActivity::class.java).apply {
+                    putExtra("userId", user.id)
+                    putExtra("userName", user.name)
+                    putExtra("userPhone", user.phone)
+                    putExtra("userEmail",user.email)
                 }
-
+                itemView.context.startActivity(intent)
+            }
+            itemView.setOnClickListener {
+                mListener?.onItemClick(user)
             }
         }
-
-        fun showAlert(msg: String) {
-            val builder = AlertDialog.Builder(itemView.context)
-            builder.setTitle("Ups!")
-            builder.setMessage(msg)
-            builder.setPositiveButton("Aceptar", null)
-            val dialog: AlertDialog = builder.create()
-            dialog.show()
-        }
     }
-
 }

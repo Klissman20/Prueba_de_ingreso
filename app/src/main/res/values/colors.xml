@@ -2,8 +2,8 @@
 <resources>
     <color name="backgroundColor">#212121</color>
     <color name="background_footer">#6A8C8686</color>
-    <color name="colorPrimary">#1E4573</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimary">#054900</color>
+    <color name="colorPrimaryDark">#033000</color>
     <color name="colorAccent">#1E4573</color>
 
     <item name="black" type="color">#000000</item>
@@ -157,7 +157,7 @@
         <item>@color/maroon</item>
         <item>@color/darkred</item>
         <item>@color/purple</item>
-        <item>@color/darkgreen</item>
+        <item>@color/darkviolet</item>
         <item>@color/darkmagenta</item>
         <item>@color/darkviolet</item>
         <item>@color/darkslategray</item>
