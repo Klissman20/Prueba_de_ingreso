@@ -1,13 +1,7 @@
 package com.example.pruebadeingreso.ui.view
 
-import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.os.Bundle
-import android.provider.Settings
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -60,42 +54,6 @@ class MainActivity : AppCompatActivity(), UserAdapter.OnItemClickListener {
         filter()
     }
 
-    private fun checkInternet(){
-        if (isOnline(this)){
-            //setupViewPager()
-        }else{
-            val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-            builder.setMessage("Connect to Internet to Continue")
-                .setCancelable(false)
-                .setPositiveButton("Connect") { dialog, id -> startActivity(Intent(Settings.ACTION_WIFI_SETTINGS)) }
-                .setNegativeButton("Quit") { dialog, id -> finish() }
-            val alert: AlertDialog = builder.create()
-            alert.show()
-        }
-    }
-
-    private fun isOnline(context: Context): Boolean {
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        if (connectivityManager != null) {
-            val capabilities =
-                connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-            if (capabilities != null) {
-                if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_CELLULAR")
-                    return true
-                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_WIFI")
-                    return true
-                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
-                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_ETHERNET")
-                    return true
-                }
-            }
-        }
-        return false
-    }
-
     private fun initRecyclerView() {
         mAdapter = UserAdapter(mUsers, this)
         mUsersRecycler!!.layoutManager = LinearLayoutManager(this)   //Vista en forma de grilla
@@ -107,7 +65,7 @@ class MainActivity : AppCompatActivity(), UserAdapter.OnItemClickListener {
             override fun onQueryTextChange(newText: String): Boolean {
                 if (newText != "") {
                     mUsers.clear()
-                    userViewModel.findByName(search(newText))
+                    userViewModel.findByName(searchFit(newText))
                 } else {
                     mUsers.clear()
                     userViewModel.onCreate()
@@ -117,7 +75,7 @@ class MainActivity : AppCompatActivity(), UserAdapter.OnItemClickListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 if (query != "") {
                     mUsers.clear()
-                    userViewModel.findByName(search(query))
+                    userViewModel.findByName(searchFit(query))
                 } else {
                     mUsers.clear()
                     userViewModel.onCreate()
@@ -127,7 +85,7 @@ class MainActivity : AppCompatActivity(), UserAdapter.OnItemClickListener {
         })
     }
 
-    private fun search(search: String?): String{
+    private fun searchFit(search: String?): String{
         val query : String
         if (search!!.length > 1) {
             val text0 = search.substring(0, 1).uppercase(Locale.ROOT)

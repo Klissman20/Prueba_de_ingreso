@@ -1,4 +1,4 @@
-package com.example.pruebadeingreso.di
+package com.example.pruebadeingreso.core
 
 import com.example.pruebadeingreso.data.network.ApiClient
 import dagger.Module
@@ -12,7 +12,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-
+    //A unique Retrofit instance is provided
     @Singleton
     @Provides
     fun provideRetrofit(): Retrofit{
@@ -21,7 +21,7 @@ object NetworkModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
-
+    //A unique ApiClient instance is provided
     @Singleton
     @Provides
     fun provideApiClient(retrofit: Retrofit): ApiClient{

@@ -12,7 +12,6 @@ class GetUsersUseCase @Inject constructor(
         var users = repository.getAllUsersFromDatabase()
         return if(users.isEmpty()){
             users = repository.getAllUserFromApi()
-            repository.clearUsers()
             repository.insertUsers(users.map { it.toDatabase() })
             users
         }else{

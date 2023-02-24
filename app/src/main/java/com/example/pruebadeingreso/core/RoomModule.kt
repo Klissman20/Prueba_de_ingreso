@@ -1,4 +1,4 @@
-package com.example.pruebadeingreso.di
+package com.example.pruebadeingreso.core
 
 import android.content.Context
 import androidx.room.Room
@@ -15,7 +15,7 @@ import javax.inject.Singleton
 object RoomModule {
 
     private const val USER_DATABASE_NAME = "user_database"
-
+    //A unique Room instance is provided
     @Singleton
     @Provides
     fun provideRoom(@ApplicationContext context: Context) =
@@ -24,7 +24,7 @@ object RoomModule {
             UserDatabase::class.java, USER_DATABASE_NAME
         ).allowMainThreadQueries().build()
 
-
+    ////A unique DatabaseDao instance is provided
     @Singleton
     @Provides
     fun provideUserDao(db: UserDatabase) = db.getUserDao()

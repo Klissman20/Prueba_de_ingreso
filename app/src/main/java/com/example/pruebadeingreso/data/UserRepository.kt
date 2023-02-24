@@ -36,8 +36,4 @@ class UserRepository @Inject constructor(
     suspend fun insertUsers(quotes:List<UserEntity>){
         userDao.insertAll(quotes)
     }
-
-    suspend fun clearUsers(){
-        userDao.deleteAllUsers()
-    }
 }
