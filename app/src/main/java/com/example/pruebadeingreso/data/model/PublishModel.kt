@@ -10,7 +10,7 @@ class PublishModel(
 
     @SerializedName("userId")
     @Expose
-    var userId: String,
+    var userId: Int,
 
     @SerializedName("title")
     @Expose

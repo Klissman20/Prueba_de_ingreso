@@ -40,7 +40,7 @@ class UserDetailActivity : AppCompatActivity() {
         mPubsRecycler = binding.recyclerViewPubs
         getData()
 
-        publishViewModel.onCreate("/posts?=$userId")
+        publishViewModel.onCreate("/posts?userId=$userId")
         publishViewModel.pubsModel.observe(this, Observer {
             mPubs.addAll(it)
             mAdapter?.notifyDataSetChanged()
