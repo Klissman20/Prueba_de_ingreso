@@ -13,8 +13,8 @@ import com.example.pruebadeingreso.UserDetailActivity
 import com.example.pruebadeingreso.adapter.UserAdapter
 import com.example.pruebadeingreso.databinding.FragmentRecyclerBinding
 import com.example.pruebadeingreso.model.User
-import com.example.pruebadeingreso.model.UserDao
-import com.example.pruebadeingreso.model.UserDatabase
+import com.example.pruebadeingreso.database.UserDao
+import com.example.pruebadeingreso.database.UserDatabase
 import com.example.pruebadeingreso.service.APIService
 import kotlinx.coroutines.*
 import retrofit2.Retrofit

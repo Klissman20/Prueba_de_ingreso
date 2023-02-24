@@ -1,7 +1,8 @@
-package com.example.pruebadeingreso.model
+package com.example.pruebadeingreso.database
 
 import android.content.Context
 import androidx.room.*
+import com.example.pruebadeingreso.model.User
 
 @Database(version = 1, entities = [User::class], exportSchema = false)
 abstract class UserDatabase : RoomDatabase() {

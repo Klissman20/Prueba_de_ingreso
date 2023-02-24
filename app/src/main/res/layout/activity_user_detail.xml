@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".UserDetailActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        app:title="@string/app_name"
+        app:titleTextColor="@color/white"
+        app:navigationIcon="?attr/homeAsUpIndicator"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card_view"
@@ -31,7 +42,7 @@
                     android:gravity="center_vertical|center"
                     android:text="@string/DetalledeUsuario"
                     android:textColor="@color/white"
-                    android:textSize="25sp"
+                    android:textSize="20sp"
                     android:textStyle="bold|italic" />
 
 
@@ -56,7 +67,7 @@
                             android:padding="10dp"
                             android:text="@string/username"
                             android:textColor="@color/colorPrimary"
-                            android:textSize="20sp"
+                            android:textSize="18sp"
                             android:textStyle="bold"
                             app:drawableStartCompat="@drawable/ic_user"
                             android:gravity="center_vertical"/>
@@ -132,21 +143,34 @@
                     android:layout_margin="10dp"
                     app:cardBackgroundColor="@color/whitesmoke">
 
-                    <LinearLayout
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/pubs"
                             android:layout_width="match_parent"
                             android:layout_height="60dp"
                             android:background="@color/colorPrimary"
                             android:gravity="center_vertical|center"
                             android:text="@string/pub"
                             android:textColor="@color/white"
-                            android:textSize="25sp"
-                            android:textStyle="bold|italic" />
+                            android:textSize="20sp"
+                            android:textStyle="bold|italic"
+                            app:layout_constraintTop_toTopOf="parent"/>
 
+                        <ProgressBar
+                            android:id="@+id/progressBar"
+                            android:layout_width="match_parent"
+                            android:layout_height="70dp"
+                            tools:progress="40"
+                            android:layout_gravity="center_horizontal|center_vertical"
+                            android:indeterminate="true"
+                            android:visibility="invisible"
+                            android:indeterminateTint="@color/black"
+                            android:layout_centerVertical="true"
+                            app:layout_constraintTop_toBottomOf="@id/pubs"/>
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/recycler_view_pubs"
@@ -154,12 +178,13 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             app:layout_constrainedHeight="true"
+                            tools:listitem="@layout/publish_item"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            tools:listitem="@layout/publish_item" />
+                            app:layout_constraintTop_toBottomOf="@id/pubs"/>
 
-                    </LinearLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                 </androidx.cardview.widget.CardView>
 
@@ -169,4 +194,4 @@
 
     </androidx.cardview.widget.CardView>
 
-</FrameLayout>
+</LinearLayout>

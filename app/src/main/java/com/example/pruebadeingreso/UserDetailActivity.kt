@@ -1,8 +1,10 @@
 package com.example.pruebadeingreso
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
+import android.view.View
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pruebadeingreso.adapter.PublishAdapter
@@ -15,6 +17,7 @@ import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+
 class UserDetailActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityUserDetailBinding
@@ -23,17 +26,33 @@ class UserDetailActivity : AppCompatActivity() {
     lateinit var pubs: ArrayList<Publish>
     private var mPubsRecycler: RecyclerView? = null
     private var mAdapter: PublishAdapter? = null
-
+    private var mToolbar: androidx.appcompat.widget.Toolbar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityUserDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        mToolbar = binding.toolbar
+        setSupportActionBar(mToolbar)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.setDisplayShowHomeEnabled(true)
+
 
         mPubsRecycler = binding.recyclerViewPubs
         getData()
         getPublish()
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     private fun getData() {
         val bundle: Bundle? = this.intent.extras
         userId = bundle!!.getInt("userId")
@@ -63,19 +82,24 @@ class UserDetailActivity : AppCompatActivity() {
             val call = getRetrofit().create(APIService::class.java).getUserPublish("/posts?userId=$userId")
             val data = call.body()
             runOnUiThread {
-                if(call.isSuccessful){
-
-                    val mPubs = mutableListOf<Publish>()
-                    if (data != null) {
-                        for (pub in data) {
-                            mPubs.add(pub)
-                        }
-                    }
-                    pubs = arrayListOf()
-                    pubs.addAll(mPubs)
-
-                    initRecyclerView()
+                while (!call.isSuccessful) {
+                    binding.progressBar.visibility = View.VISIBLE
+                    mPubsRecycler!!.visibility = View.INVISIBLE
                 }
+                val mPubs = mutableListOf<Publish>()
+                if (data != null) {
+                    for (pub in data) {
+                        mPubs.add(pub)
+                    }
+                }
+                pubs = arrayListOf()
+                pubs.addAll(mPubs)
+
+                binding.progressBar.visibility = View.INVISIBLE
+                mPubsRecycler!!.visibility = View.VISIBLE
+
+                initRecyclerView()
+
             }
         }
     }

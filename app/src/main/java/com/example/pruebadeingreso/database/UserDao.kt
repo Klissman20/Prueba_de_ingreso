@@ -1,8 +1,9 @@
-package com.example.pruebadeingreso.model
+package com.example.pruebadeingreso.database
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import com.example.pruebadeingreso.model.User
 
 @Dao
 interface UserDao {
