@@ -1,4 +1,4 @@
-package com.example.pruebadeingreso.adapter
+package com.example.pruebadeingreso.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,9 +6,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pruebadeingreso.R
 import com.example.pruebadeingreso.databinding.PublishItemBinding
-import com.example.pruebadeingreso.model.Publish
+import com.example.pruebadeingreso.data.model.PublishModel
 
-open class PublishAdapter(private val mPubs: ArrayList<Publish>) : RecyclerView.Adapter<PublishAdapter.ViewHolder>() {
+open class PublishAdapter(private val mPubs: List<PublishModel>) : RecyclerView.Adapter<PublishAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -19,14 +19,14 @@ open class PublishAdapter(private val mPubs: ArrayList<Publish>) : RecyclerView.
         return mPubs.size
     }
 
-    override fun onBindViewHolder(holder: PublishAdapter.ViewHolder, position: Int) {
-        holder.bind()
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val item = mPubs[position]
+        holder.bind(item)
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val binding = PublishItemBinding.bind(itemView)
-        fun bind(){
-            val pub: Publish = mPubs[adapterPosition]
+        fun bind(pub: PublishModel){
             binding.pubTitle.text = pub.title
             binding.pubBody.text = pub.body
         }

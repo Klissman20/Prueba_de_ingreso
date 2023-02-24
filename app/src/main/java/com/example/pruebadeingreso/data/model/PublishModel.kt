@@ -1,9 +1,9 @@
-package com.example.pruebadeingreso.model
+package com.example.pruebadeingreso.data.model
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-class Publish(
+class PublishModel(
     @SerializedName("id")
     @Expose
     var id: Int,

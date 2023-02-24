@@ -1,4 +1,4 @@
-package com.example.pruebadeingreso.adapter
+package com.example.pruebadeingreso.ui.adapter
 
 import android.content.Intent
 import android.view.LayoutInflater
@@ -6,12 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pruebadeingreso.R
-import com.example.pruebadeingreso.UserDetailActivity
+import com.example.pruebadeingreso.ui.view.UserDetailActivity
 import com.example.pruebadeingreso.databinding.UserItemBinding
-import com.example.pruebadeingreso.model.User
+import com.example.pruebadeingreso.domain.model.User
 
 open class UserAdapter(
-    private val mUsers: ArrayList<User>,
+    private val mUserModels: List<User>,
     listener: OnItemClickListener
 ) : RecyclerView.Adapter<UserAdapter.ViewHolder>() {
 
@@ -27,19 +27,19 @@ open class UserAdapter(
     }
 
     override fun getItemCount(): Int {
-        return mUsers.size
+        return mUserModels.size
     }
 
-    override fun onBindViewHolder(holder: UserAdapter.ViewHolder, position: Int) {
-        holder.bind()
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val item = mUserModels[position]
+        holder.bind(item)
     }
 
-    interface OnItemClickListener {fun onItemClick(user: User)}
+    interface OnItemClickListener {fun onItemClick(userModel: User)}
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val binding = UserItemBinding.bind(itemView)
-        fun bind(){
-            val user: User = mUsers[adapterPosition]
+        fun bind(user: User){
             binding.userName.text = user.name
             binding.userPhone.text = user.phone
             binding.userEmail.text = user.email

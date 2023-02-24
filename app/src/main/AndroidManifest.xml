@@ -6,6 +6,7 @@
 
     <application
         android:allowBackup="true"
+        android:name=".MvvmApp"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -13,10 +14,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PruebaDeIngreso">
         <activity
-            android:name=".UserDetailActivity"
+            android:name=".ui.view.UserDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.view.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
