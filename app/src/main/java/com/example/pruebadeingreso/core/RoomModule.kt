@@ -15,7 +15,7 @@ import javax.inject.Singleton
 object RoomModule {
 
     private const val USER_DATABASE_NAME = "user_database"
-    //A unique Room instance is provided
+    //A unique RoomDB instance is provided
     @Singleton
     @Provides
     fun provideRoom(@ApplicationContext context: Context) =
